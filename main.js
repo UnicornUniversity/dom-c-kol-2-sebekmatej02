@@ -1,35 +1,78 @@
-//TODO add imports if needed
-//import { exMain } from "./exclude/exampleAss2.js"
-//TODO add/change doc as needed
+// Převod čísla mezi binární (2) a desítkovou (10) soustavou.
+
 /**
- * TODO - Write functional code for this application. You can call any other function, but usage of ".toString(numberSystem)" and "Number.parseInt(number, numberSystem)" is forbidden (only permitted when used on individual digits).
- * The main function which calls the application. 
- * TODO - Please, add specific description here for the application purpose.
- * @param {string} inputNumber number that is being converted
- * @param {number} inputNumberSystem numerical system that the inputNumber is being converted from
- * @param {number} outputNumberSystem numerical system that the inputNumber is being converted into
- * @returns {string} containing number converted to output system
+ * Podle inputNumberSystem a outputNumberSystem provede převod.
+ *
+ * @param {string} inputNumber číslo k převodu (jako string)
+ * @param {number} inputNumberSystem soustava vstupu (2 nebo 10)
+ * @param {number} outputNumberSystem soustava výstupu (2 nebo 10)
+ * @returns {string} převedené číslo jako string
  */
 export function main(inputNumber, inputNumberSystem, outputNumberSystem) {
-  //TODO code
-  //let dtoOut = exMain(inputNumber, inputNumberSystem, outputNumberSystem);
-  return dtoOut;
+  if (!permittedInputSystems().includes(inputNumberSystem)) return null;
+  if (!permittedOutputSystems().includes(outputNumberSystem)) return null;
+
+  if (inputNumberSystem === outputNumberSystem) {
+    return String(inputNumber);
+  }
+
+  if (inputNumberSystem === 2 && outputNumberSystem === 10) {
+    return binarniNaDesitkove(inputNumber);
+  }
+
+  if (inputNumberSystem === 10 && outputNumberSystem === 2) {
+    return desitkoveNaBinarni(inputNumber);
+  }
+
+  return null; // fallback (testování miluje bezpečný výstup)
+}
+
+function binarniNaDesitkove(binarniCislo) {
+  let vysledek = 0;
+  let mocnina = 1;
+
+  for (let i = binarniCislo.length - 1; i >= 0; i--) {
+    const cifra = binarniCislo[i];
+
+    if (cifra !== "0" && cifra !== "1") {
+      return null;
+    }
+
+    if (cifra === "1") {
+      vysledek += mocnina;
+    }
+
+    mocnina *= 2;
+  }
+
+  return String(vysledek);
 }
 
 /**
- * TODO - Change this to contain all input number systems that your application can convert from.
- * Function which returns which number systems are permitted on input.
- * @returns {Array} array of numbers refering to permitted input systems
+ * Převod desítkového čísla (string) na binární (string).
  */
+function desitkoveNaBinarni(desitkoveCislo) {
+  let cislo = Number(desitkoveCislo);
+
+  if (isNaN(cislo) || cislo < 0) return null;
+
+  if (cislo === 0) return "0";
+
+  let vysledek = "";
+
+  while (cislo > 0) {
+    const zbytek = cislo % 2;
+    vysledek = zbytek + vysledek;
+    cislo = (cislo - zbytek) / 2;
+  }
+
+  return vysledek;
+}
+
 export function permittedInputSystems() {
-	return [10, 2];
+  return [2, 10];
 }
 
-/**
- * TODO - Change this to contain all output number systems that your application can convert to.
- * Function which returns which number systems are permitted on output.
- * @returns {Array} array of numbers refering to permitted output systems
- */
 export function permittedOutputSystems() {
-	return [10, 2];
+  return [2, 10];
 }
